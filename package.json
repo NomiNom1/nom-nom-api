@@ -1,0 +1,21 @@
+{
+  "name": "nom-nom-api",
+  "version": "1.0.0",
+  "description": "[![Last Commit](https://img.shields.io/github/last-commit/NomiNom1/nom-nom-api?style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api/main) [![Contributors](https://img.shields.io/github/contributors/NomiNom1/nom-nom-api?style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api/graphs/contributors) [![Commit Activity](https://img.shields.io/github/commit-activity/y/NomiNom1/nom-nom-api?style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api/graphs/commit-activity) [![Repo Size](https://img.shields.io/github/repo-size/NomiNom1/nom-nom-api?style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api) [![Top Language](https://img.shields.io/github/languages/top/NomiNom1/nom-nom-api?style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api/search?l=YOUR_TOP_LANGUAGE) [![Forks](https://img.shields.io/github/forks/NomiNom1/nom-nom-api?style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api/network/members) [![Stars](https://img.shields.io/github/stars/NomiNom1/nom-nom-api?style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api/stargazers) [![Issues](https://img.shields.io/github/issues/NomiNom1/nom-nom-api?style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api/issues) [![Open Issues](https://img.shields.io/github/issues-raw/NomiNom1/nom-nom-api?state=open&style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api/issues) [![Closed Issues](https://img.shields.io/github/issues-closed-raw/NomiNom1/nom-nom-api?style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api/issues?q=is%3Aclosed) [![License](https://img.shields.io/github/license/NomiNom1/nom-nom-api?style=for-the-badge)](https://github.com/NomiNom1/nom-nom-api/blob/master/LICENSE) ![Created At](https://img.shields.io/github/created-at/NomiNom1/nom-nom-api?style=for-the-badge ) [![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/owenmurphy2022/) [![Docker Hub](https://img.shields.io/badge/Docker-Hub-blue?logo=docker&style=for-the-badge)](https://hub.docker.com/repository/docker/owenmurphy2022v1/conversational-faiss-rag-api)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^5.0.1",
+    "express": "^5.1.0",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2"
+  }
+}
