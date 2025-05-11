@@ -1,0 +1,39 @@
+{
+    "_id": ObjectId(),
+    "userId": ObjectId(), // Reference to the Users collection
+    "restaurantId": ObjectId(), // Reference to the Restaurants collection
+    "deliveryPartnerId": ObjectId(), // Reference to the DeliveryPartners collection (initially null)
+    "orderItems": [
+      {
+        "menuItemId": ObjectId(), // Reference to the _id in the Restaurants.menu array
+        "name": "Margherita Pizza",
+        "quantity": 1,
+        "price": 12.99,
+        "specialInstructions": "No olives"
+      },
+      // ... other items
+    ],
+    "orderTotal": 12.99,
+    "deliveryFee": 2.99,
+    "tax": 1.00,
+    "grandTotal": 16.98,
+    "deliveryAddress": { // Embedded delivery address for record-keeping
+      "street": "456 Oak Ave",
+      "city": "San Francisco",
+      "state": "CA",
+      "zipCode": "94103",
+      "location": {
+        "type": "Point",
+        "coordinates": [-122.4313, 37.7739]
+      }
+    },
+    "paymentMethod": {
+      "type": "credit_card",
+      "cardNumber": "************1234"
+    },
+    "orderStatus": "pending", // pending, accepted, preparing, out_for_delivery, delivered, cancelled
+    "createdAt": ISODate(),
+    "updatedAt": ISODate(),
+    "estimatedDeliveryTime": ISODate(),
+    "actualDeliveryTime": ISODate()
+  }

@@ -1,0 +1,15 @@
+{
+    "_id": ObjectId(),
+    "orderId": ObjectId(), // Reference to the Orders collection
+    "userId": ObjectId(), // Reference to the Users collection
+    "transactionId": "unique_payment_gateway_id",
+    "paymentMethod": {
+      "type": "credit_card",
+      "cardNumber": "************1234"
+    },
+    "amount": 16.98,
+    "currency": "USD",
+    "status": "success" | "pending" | "failed" | "refunded",
+    "createdAt": ISODate(),
+    "updatedAt": ISODate()
+  }

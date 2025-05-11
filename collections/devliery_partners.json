@@ -1,0 +1,19 @@
+{
+    "_id": ObjectId(),
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "email": "alice.smith@example.com",
+    "phone": "555-111-2222",
+    "currentLocation": {
+      "type": "Point",
+      "coordinates": [-122.3930, 37.7952]
+    },
+    "availability": true,
+    "vehicleType": "car",
+    "assignedOrders": [ObjectId()], // Array of references to currently assigned Orders
+    "orderHistory": [ObjectId()], // Array of references to completed Orders
+    "rating": 4.8,
+    "reviewCount": 85,
+    "createdAt": ISODate(),
+    "updatedAt": ISODate()
+  }

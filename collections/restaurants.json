@@ -1,0 +1,44 @@
+{
+    "_id": ObjectId(),
+    "name": "Pizza Place",
+    "address": {
+      "street": "123 Main St",
+      "city": "San Francisco",
+      "state": "CA",
+      "zipCode": "94102",
+      "location": { // For geospatial queries
+        "type": "Point",
+        "coordinates": [-122.4076, 37.7836] // [longitude, latitude]
+      }
+    },
+    "phone": "555-123-4567",
+    "cuisine": ["Italian", "Pizza"],
+    "menu": [
+      {
+        "_id": ObjectId(),
+        "name": "Margherita Pizza",
+        "description": "Classic cheese and tomato pizza",
+        "price": 12.99,
+        "category": "Pizzas",
+        "image": "url_to_image"
+      },
+      {
+        "_id": ObjectId(),
+        "name": "Pasta Carbonara",
+        "description": "Spaghetti with eggs, cheese, pancetta, and black pepper",
+        "price": 14.50,
+        "category": "Pastas"
+      }
+    ],
+    "openingHours": {
+      "monday": {"open": "11:00", "close": "22:00"},
+      "tuesday": {"open": "11:00", "close": "22:00"},
+      // ... other days
+      "sunday": null // Closed on Sunday
+    },
+    "rating": 4.5,
+    "reviewCount": 120,
+    "ownerId": ObjectId(), // Reference to a user who owns the restaurant (if applicable)
+    "createdAt": ISODate(),
+    "updatedAt": ISODate()
+  }

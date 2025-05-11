@@ -1,0 +1,10 @@
+{
+    "_id": ObjectId(),
+    "orderId": ObjectId(), // Reference to the Orders collection
+    "deliveryPartnerId": ObjectId(), // Reference to the DeliveryPartners collection
+    "currentLocation": {
+      "type": "Point",
+      "coordinates": [-122.4194, 37.7749]
+    },
+    "timestamp": ISODate()
+  }

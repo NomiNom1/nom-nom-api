@@ -1,0 +1,10 @@
+{
+    "_id": ObjectId(),
+    "orderId": ObjectId(), // Reference to the Orders collection
+    "senderId": ObjectId(), // Reference to either the Users or DeliveryPartners collection
+    "receiverId": ObjectId(), // Reference to either the Users or DeliveryPartners collection
+    "senderType": "user" | "driver", // To easily identify the sender role
+    "message": "Hi, I'm outside with your order.",
+    "timestamp": ISODate(),
+    "readByReceiver": false // For indicating if the message has been read
+  }

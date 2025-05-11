@@ -1,0 +1,12 @@
+{
+    "_id": ObjectId(),
+    "orderId": ObjectId(), // Reference to the Orders collection
+    "userId": ObjectId(), // Reference to the Users collection
+    "restaurantId": ObjectId(), // Reference to the Restaurants collection (can be null if reviewing a driver)
+    "deliveryPartnerId": ObjectId(), // Reference to the DeliveryPartners collection (can be null if reviewing a restaurant)
+    "rating": 1 | 2 | 3 | 4 | 5,
+    "comment": "The pizza was delicious!",
+    "reviewType": "restaurant" | "driver",
+    "createdAt": ISODate(),
+    "updatedAt": ISODate()
+  }

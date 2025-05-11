@@ -1,0 +1,41 @@
+{
+    "_id": ObjectId(),
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "phone": "555-987-6543",
+    "password": "hashed_password",
+    "profilePhoto": {
+        "url": "url_to_profile_photo", // Could be a URL to cloud storage (e.g., AWS S3, Google Cloud Storage)
+        "thumbnailUrl": "url_to_thumbnail" // Optional: for faster loading in lists
+    },
+    "deliveryAddresses": [
+      {
+        "_id": ObjectId(),
+        "street": "456 Oak Ave",
+        "city": "San Francisco",
+        "state": "CA",
+        "zipCode": "94103",
+        "location": {
+          "type": "Point",
+          "coordinates": [-122.4313, 37.7739]
+        },
+        "isDefault": true
+      },
+      // ... other addresses
+    ],
+    "paymentMethods": [
+      {
+        "_id": ObjectId(),
+        "type": "credit_card",
+        "cardNumber": "************1234", // Store only last few digits or use a token
+        "expiryDate": "12/25",
+        "cardHolderName": "John Doe",
+        "isDefault": true
+      },
+      // ... other payment methods
+    ],
+    "orderHistory": [ObjectId()], // Array of references to the Orders collection
+    "createdAt": ISODate(),
+    "updatedAt": ISODate()
+  }

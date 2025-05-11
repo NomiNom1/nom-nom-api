@@ -1,0 +1,20 @@
+{
+    "_id": ObjectId(),
+    "name": "Summer Sale",
+    "code": "SUMMER20",
+    "description": "Get 20% off all orders!",
+    "discountType": "percentage" | "fixed",
+    "discountValue": 0.20 | 5.00,
+    "applicableTo": "all" | "restaurant" | "category" | "item",
+    "restaurantIds": [ObjectId()], // If applicable to specific restaurants
+    "categoryIds": [String], // If applicable to specific menu categories
+    "itemIds": [ObjectId()], // If applicable to specific menu items
+    "startDate": ISODate(),
+    "endDate": ISODate(),
+    "minOrderValue": 20.00,
+    "usageLimit": 1000,
+    "usageCount": 0,
+    "isActive": true,
+    "createdAt": ISODate(),
+    "updatedAt": ISODate()
+  }
