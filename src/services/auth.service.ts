@@ -5,8 +5,8 @@ import { User, IUser } from '../models/user.model';
 import { logger } from '../utils/logger';
 import { sendEmail } from '../utils/email';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET ?? 'your-secret-key';
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET ?? 'your-refresh-secret-key';
 const EMAIL_TOKEN_EXPIRY = '15m';
 const REFRESH_TOKEN_EXPIRY = '7d';
 
@@ -63,7 +63,7 @@ export class AuthService {
       }
 
       // Generate tokens
-      const accessToken = this.generateAccessToken(user._id.toString());
+      const accessToken = this.generateAccessToken(user.id.toString());
       const refreshToken = this.generateRefreshToken();
 
       // Create session
