@@ -40,8 +40,8 @@ export class AuthController {
         return;
       }
 
-      // const tokens = await this.authService.verifyEmailToken(token as string, deviceInfo);
-      res.status(200).json("tokens");
+      const tokens = await this.authService.verifyEmailToken(token as string, deviceInfo);
+      res.status(200).json(tokens);
     } catch (error) {
       logger.error('Error in verifyEmailToken controller:', error);
       res.status(500).json({ message: 'Error verifying email token', error: (error as Error).message });
