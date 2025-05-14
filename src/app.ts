@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -5,6 +6,7 @@ import compression from 'compression';
 import { connectDB } from './config/database';
 import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
+import phoneVerificationRoutes from './routes/phone-verification.routes';
 import { logger } from './utils/logger';
 
 const app = express();
@@ -34,6 +36,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/phone-verification', phoneVerificationRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -42,7 +45,7 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT ?? 3000;
 
 const startServer = async () => {
   try {
