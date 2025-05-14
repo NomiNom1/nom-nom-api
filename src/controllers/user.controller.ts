@@ -3,7 +3,7 @@ import { UserService } from '../services/user.service';
 import { logger } from '../utils/logger';
 
 export class UserController {
-  private userService: UserService;
+  private readonly userService: UserService;
 
   constructor() {
     this.userService = new UserService();
