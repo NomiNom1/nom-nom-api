@@ -2,8 +2,39 @@ import { User, IUser } from '../models/user.model';
 import { logger } from '../utils/logger';
 
 export class UserService {
+  private validateCountryCode(countryCode: string): boolean {
+    // ISO 3166-1 alpha-2 country codes
+    const validCountryCodes = new Set([
+      'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'JP', 'KR', 'CN', 'IN', 'BR', 'MX'
+      // Add more country codes as needed
+    ]);
+    return validCountryCodes.has(countryCode.toUpperCase());
+  }
+
+  private formatPhoneNumber(phone: string, countryCode: string): string {
+    // Remove all non-numeric characters
+    const cleaned = phone.replace(/\D/g, '');
+    
+    // Add country code if not present
+    if (!cleaned.startsWith(countryCode)) {
+      return `${countryCode}${cleaned}`;
+    }
+    
+    return cleaned;
+  }
+
   async createUser(userData: Partial<IUser>): Promise<IUser> {
     try {
+      // Validate country code
+      if (userData.countryCode && !this.validateCountryCode(userData.countryCode)) {
+        throw new Error('Invalid country code');
+      }
+
+      // Format phone number with country code
+      if (userData.phone && userData.countryCode) {
+        userData.phone = this.formatPhoneNumber(userData.phone, userData.countryCode);
+      }
+
       const user = new User(userData);
       return await user.save();
     } catch (error) {

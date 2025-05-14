@@ -5,6 +5,7 @@ export interface IUser extends Document {
   lastName: string;
   email: string;
   phone: string;
+  countryCode: string;
   password?: string;
   profilePhoto?: {
     url: string;
@@ -15,6 +16,7 @@ export interface IUser extends Document {
     city: string;
     state: string;
     zipCode: string;
+    country: string;
     location: {
       type: string;
       coordinates: [number, number];
@@ -39,6 +41,7 @@ const userSchema = new Schema<IUser>(
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: true, unique: true },
+    countryCode: { type: String, required: true, default: 'US' },
     password: { type: String, required: false },
     profilePhoto: {
       url: String,
@@ -49,6 +52,7 @@ const userSchema = new Schema<IUser>(
       city: { type: String, required: true },
       state: { type: String, required: true },
       zipCode: { type: String, required: true },
+      country: { type: String, required: true, default: 'US' },
       location: {
         type: { type: String, enum: ['Point'], default: 'Point' },
         coordinates: { type: [Number], required: true },
@@ -69,9 +73,10 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-// Index for geospatial queries
+// Indexes for performance
 userSchema.index({ 'deliveryAddresses.location': '2dsphere' });
-// Index for email queries
 userSchema.index({ email: 1 });
+userSchema.index({ phone: 1, countryCode: 1 }, { unique: true });
+userSchema.index({ countryCode: 1 });
 
 export const User = mongoose.model<IUser>('User', userSchema); 
