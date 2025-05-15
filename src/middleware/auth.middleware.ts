@@ -39,7 +39,7 @@ export const authenticateToken = async (
     }
 
     req.user = {
-      id: user._id.toString(),
+      id: user.id.toString(),
       email: user.email,
     };
 
