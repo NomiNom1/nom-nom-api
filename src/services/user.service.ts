@@ -96,4 +96,22 @@ export class UserService {
       throw error;
     }
   }
+
+  async findUserByPhone(phone: string, countryCode: string): Promise<IUser | null> {
+    try {
+      // Validate country code
+      if (!this.validateCountryCode(countryCode)) {
+        throw new Error('Invalid country code');
+      }
+
+      // Format phone number with country code
+      const formattedPhone = this.formatPhoneNumber(phone, countryCode);
+
+      // Use the compound index we already have on phone and countryCode
+      return await User.findOne({ phone: formattedPhone, countryCode });
+    } catch (error) {
+      logger.error('Error finding user by phone:', error);
+      throw error;
+    }
+  }
 } 

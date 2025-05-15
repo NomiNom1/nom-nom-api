@@ -7,6 +7,7 @@ const userController = new UserController();
 // User routes
 router.post('/', userController.createUser);
 router.get('/', userController.listUsers);
+router.get('/phone', userController.findUserByPhone);
 router.get('/:id', userController.getUserById);
 router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
