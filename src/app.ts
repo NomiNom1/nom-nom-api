@@ -1,4 +1,4 @@
-import 'dotenv/config';
+// import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -11,6 +11,7 @@ import { logger } from './utils/logger';
 
 const app = express();
 
+console.log(process.env.TWILIO_ACCOUNT_SID)
 //TODO: 
 // Use Redis for storing email tokens and rate limiting
 // Use a proper email service (SendGrid, AWS SES, etc.)
