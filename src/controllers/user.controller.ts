@@ -3,7 +3,7 @@ import { UserService } from '../services/user.service';
 import { logger } from '../utils/logger';
 
 export class UserController {
-  private userService: UserService;
+  private readonly userService: UserService;
 
   constructor() {
     this.userService = new UserService();
@@ -70,6 +70,29 @@ export class UserController {
     } catch (error) {
       logger.error('Error in listUsers controller:', error);
       res.status(500).json({ message: 'Error listing users', error: (error as Error).message });
+    }
+  };
+
+  findUserByPhone = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { phone, countryCode } = req.query;
+      
+      if (!phone || !countryCode) {
+        res.status(400).json({ message: 'Phone number and country code are required' });
+        return;
+      }
+
+      const user = await this.userService.findUserByPhone(phone as string, countryCode as string);
+      
+      if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+
+      res.json(user);
+    } catch (error) {
+      logger.error('Error in findUserByPhone controller:', error);
+      res.status(500).json({ message: 'Error finding user', error: (error as Error).message });
     }
   };
 } 
