@@ -1,5 +1,5 @@
-import Redis from 'ioredis';
-import { logger } from '../utils/logger';
+import Redis from "ioredis";
+import { logger } from "../utils/logger";
 
 export interface RedisConfig {
   host: string;
@@ -21,7 +21,7 @@ export class RedisService {
 
   private constructor(config: RedisConfig) {
     this.config = config;
-    
+
     // Configure Redis connection with connection pooling
     this.redis = new Redis({
       host: config.host,
@@ -33,15 +33,14 @@ export class RedisService {
         const delay = Math.min(times * 50, 2000);
         return delay;
       },
-      maxRetriesPerRequest: 3,
       enableReadyCheck: true,
-      showFriendlyErrorStack: process.env.NODE_ENV !== 'production',
+      showFriendlyErrorStack: process.env.NODE_ENV !== "production",
       // Connection pooling settings
-      connectionName: config.keyPrefix || 'default',
+      connectionName: config.keyPrefix || "default",
       enableOfflineQueue: true,
       maxRetriesPerRequest: 3,
       reconnectOnError: (err) => {
-        const targetError = 'READONLY';
+        const targetError = "READONLY";
         if (err.message.includes(targetError)) {
           return true;
         }
@@ -53,22 +52,26 @@ export class RedisService {
   }
 
   private setupEventListeners(): void {
-    this.redis.on('error', (error) => {
+    this.redis.on("error", (error) => {
       this.metrics.errors++;
-      logger.error('Redis connection error:', error);
+      logger.error("Redis connection error:", error);
     });
 
-    this.redis.on('connect', () => {
-      logger.info(`Successfully connected to Redis instance: ${this.config.keyPrefix || 'default'}`);
+    this.redis.on("connect", () => {
+      logger.info(
+        `Successfully connected to Redis instance: ${this.config.keyPrefix || "default"}`
+      );
     });
 
-    this.redis.on('ready', () => {
-      logger.info(`Redis instance ready: ${this.config.keyPrefix || 'default'}`);
+    this.redis.on("ready", () => {
+      logger.info(
+        `Redis instance ready: ${this.config.keyPrefix || "default"}`
+      );
     });
   }
 
   public static getInstance(config: RedisConfig): RedisService {
-    const key = `${config.host}:${config.port}:${config.db || 0}:${config.keyPrefix || 'default'}`;
+    const key = `${config.host}:${config.port}:${config.db || 0}:${config.keyPrefix || "default"}`;
     if (!RedisService.instances.has(key)) {
       RedisService.instances.set(key, new RedisService(config));
     }
@@ -84,7 +87,7 @@ export class RedisService {
       return data ? JSON.parse(data) : null;
     } catch (error) {
       this.metrics.errors++;
-      logger.error('Redis get error:', error);
+      logger.error("Redis get error:", error);
       throw error;
     }
   }
@@ -102,7 +105,7 @@ export class RedisService {
       this.metrics.commands++;
     } catch (error) {
       this.metrics.errors++;
-      logger.error('Redis set error:', error);
+      logger.error("Redis set error:", error);
       throw error;
     }
   }
@@ -115,7 +118,7 @@ export class RedisService {
       this.metrics.commands++;
     } catch (error) {
       this.metrics.errors++;
-      logger.error('Redis delete error:', error);
+      logger.error("Redis delete error:", error);
       throw error;
     }
   }
@@ -129,7 +132,7 @@ export class RedisService {
       return result === 1;
     } catch (error) {
       this.metrics.errors++;
-      logger.error('Redis exists error:', error);
+      logger.error("Redis exists error:", error);
       throw error;
     }
   }
@@ -147,7 +150,7 @@ export class RedisService {
       return results ? (results[0][1] as number) : 0;
     } catch (error) {
       this.metrics.errors++;
-      logger.error('Redis increment error:', error);
+      logger.error("Redis increment error:", error);
       throw error;
     }
   }
@@ -158,17 +161,17 @@ export class RedisService {
       const startTime = Date.now();
       const result = await this.redis.set(
         `lock:${key}`,
-        '1',
-        'EX',
+        "1",
+        "EX",
         ttlSeconds,
-        'NX'
+        "NX"
       );
       this.metrics.latency += Date.now() - startTime;
       this.metrics.commands++;
-      return result === 'OK';
+      return result === "OK";
     } catch (error) {
       this.metrics.errors++;
-      logger.error('Redis acquire lock error:', error);
+      logger.error("Redis acquire lock error:", error);
       throw error;
     }
   }
@@ -181,7 +184,7 @@ export class RedisService {
       this.metrics.commands++;
     } catch (error) {
       this.metrics.errors++;
-      logger.error('Redis release lock error:', error);
+      logger.error("Redis release lock error:", error);
       throw error;
     }
   }
@@ -196,7 +199,7 @@ export class RedisService {
       return true;
     } catch (error) {
       this.metrics.errors++;
-      logger.error('Redis health check failed:', error);
+      logger.error("Redis health check failed:", error);
       return false;
     }
   }
@@ -217,4 +220,4 @@ export class RedisService {
   async cleanup(): Promise<void> {
     await this.redis.quit();
   }
-} 
+}
