@@ -226,7 +226,7 @@ LLM
 
 
 # prompts
-I am creating an app similar to Doordash, Uber Eats, and Grubhub. Follow google / meta best practices for highly scalabe app design the size of TikTok, Instagram, or WeChat for the API that is in Node / Express TypeScript. 
+I am creating an IOS app similar to Doordash, Uber Eats, and Grubhub. Follow google / meta best practices for highly scalabe app design the size of TikTok, Instagram, or WeChat for the API that is in Node / Express TypeScript. 
 
 Need:
 https://developers.google.com/maps/documentation/places/web-service/place-autocomplete
