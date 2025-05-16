@@ -1,25 +1,23 @@
 import { Router } from "express";
-import { rateLimit } from "express-rate-limit";
 import { LocationController } from "../controllers/location.controller";
+import { createRateLimiter } from "../middleware/rate-limit.middleware";
 
 const router = Router();
 const locationController = new LocationController();
 
 // Rate limiting configuration
-const searchLimiter = rateLimit({
+const searchLimiter = createRateLimiter({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 10, // 10 requests per minute
-  message: "Too many requests, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
+  message: "Too many search requests, please try again later.",
+  keyGenerator: (req) => `ratelimit:search:${req.ip}`,
 });
 
-const detailsLimiter = rateLimit({
+const detailsLimiter = createRateLimiter({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 20, // 20 requests per minute
-  message: "Too many requests, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
+  message: "Too many details requests, please try again later.",
+  keyGenerator: (req) => `ratelimit:details:${req.ip}`,
 });
 
 // Location routes
