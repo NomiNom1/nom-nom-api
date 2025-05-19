@@ -35,7 +35,7 @@ export class LocationController {
 
   getPlaceDetails = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { placeId, sessionToken } = req.query;
+      const { placeId } = req.query;
 
       if (!placeId || typeof placeId !== "string") {
         res.status(400).json({ message: "Place ID is required" });
@@ -44,7 +44,7 @@ export class LocationController {
 
       const details = await this.locationService.getPlaceDetails(
         placeId,
-        sessionToken as string | undefined
+        // sessionToken as string | undefined // TODO: add later
       );
 
       res.json({ details });
