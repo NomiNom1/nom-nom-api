@@ -11,10 +11,10 @@ export interface IAddress extends Document {
   state: string;
   zipCode: string;
   country: string;
-  location: {
-    type: string;
-    coordinates: [number, number];
-  };
+  // location?: { TODO: add later
+  //   type: string;
+  //   coordinates?: [number, number];
+  // };
   dropOffOptions: {
     handItToMe: boolean;
     leaveAtDoor: boolean;
@@ -60,13 +60,13 @@ const addressSchema = new Schema<IAddress>({
   state: { type: String, required: true },
   zipCode: { type: String, required: true },
   country: { type: String, required: true, default: 'US' },
-  location: {
-    type: { type: String, enum: ['Point'], default: 'Point' },
-    coordinates: { type: [Number], required: true },
-  },
+  // location: { TODO: add later
+  //   type: { type: String, enum: ['Point'], default: 'Point' },
+  //   coordinates: { type: [Number], required: false },
+  // },
   dropOffOptions: {
-    handItToMe: { type: Boolean, default: true },
-    leaveAtDoor: { type: Boolean, default: true },
+    handItToMe: { type: Boolean, default: false },
+    leaveAtDoor: { type: Boolean, default: false },
   },
   instructions: { type: String },
   isDefault: { type: Boolean, default: false },

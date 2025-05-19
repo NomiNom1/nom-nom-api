@@ -9,11 +9,22 @@ export class AddressController {
     this.addressService = new AddressService();
   }
 
+  private getUserId(req: Request): string | null {
+    // First try to get from API Gateway header
+    const apiGatewayUserId = req.headers['x-user-id'] as string;
+    if (apiGatewayUserId) {
+      return apiGatewayUserId;
+    }
+
+    // Fall back to authenticated user
+    return req.user?.id || null;
+  }
+
   addAddress = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id;
+      const userId = this.getUserId(req);
       if (!userId) {
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'User ID is required' });
         return;
       }
 
@@ -30,9 +41,9 @@ export class AddressController {
 
   updateAddress = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id;
+      const userId = this.getUserId(req);
       if (!userId) {
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'User ID is required' });
         return;
       }
 
@@ -60,9 +71,9 @@ export class AddressController {
 
   deleteAddress = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id;
+      const userId = this.getUserId(req);
       if (!userId) {
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'User ID is required' });
         return;
       }
 
@@ -80,9 +91,9 @@ export class AddressController {
 
   getAddresses = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id;
+      const userId = this.getUserId(req);
       if (!userId) {
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'User ID is required' });
         return;
       }
 
@@ -99,9 +110,9 @@ export class AddressController {
 
   getAddressById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id;
+      const userId = this.getUserId(req);
       if (!userId) {
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'User ID is required' });
         return;
       }
 
@@ -125,9 +136,9 @@ export class AddressController {
 
   setDefaultAddress = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.id;
+      const userId = this.getUserId(req);
       if (!userId) {
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'User ID is required' });
         return;
       }
 

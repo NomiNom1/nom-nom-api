@@ -42,6 +42,7 @@ export class AddressService {
       }
 
       const newAddress = new mongoose.Types.ObjectId();
+      console.log("address", addressData);
       const address: IAddress = {
         _id: newAddress,
         ...addressData as Omit<IAddress, '_id'>,
@@ -144,11 +145,13 @@ export class AddressService {
 
   async getAddresses(userId: string): Promise<IAddress[]> {
     try {
+      console.log("getAddresses service", userId);
       // Try to get from cache first
       const cacheKey = `user:${userId}:addresses`;
       const cachedAddresses = await this.redisService.get<IAddress[]>(cacheKey);
       
       if (cachedAddresses) {
+        console.log("cachedAddresses", cachedAddresses);
         return cachedAddresses;
       }
 
@@ -156,6 +159,8 @@ export class AddressService {
       if (!user) {
         throw new Error('User not found');
       }
+
+      console.log("user.addresses", user);
 
       // Cache the addresses
       await this.redisService.set(cacheKey, user.addresses, this.CACHE_TTL);
