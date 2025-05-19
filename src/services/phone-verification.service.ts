@@ -1,11 +1,12 @@
-import { Redis } from "ioredis";
 import { RateLimiterRedis } from "rate-limiter-flexible";
 import { Twilio } from "twilio";
+import { getRedisConfig } from "../config/redis.config";
 import { logger } from "../utils/logger";
+import { RedisService } from "./redis.service";
 
 export class PhoneVerificationService {
   private readonly twilioClient: Twilio;
-  private readonly redisClient: Redis;
+  private readonly redisService: RedisService;
   private readonly rateLimiter: RateLimiterRedis;
 
   constructor() {
@@ -15,19 +16,13 @@ export class PhoneVerificationService {
       process.env.TWILIO_AUTH_TOKEN
     );
 
-    // Initialize Redis client
-    this.redisClient = new Redis({
-      host: process.env.REDIS_HOST,
-      port: Number(process.env.REDIS_PORT),
-      password: process.env.REDIS_PASSWORD,
-      enableOfflineQueue: false,
-      maxRetriesPerRequest: 3,
-      retryStrategy: (times) => Math.min(times * 50, 2000),
-    });
+    this.redisService = RedisService.getInstance(
+      getRedisConfig("phone_verification")
+    );
 
-    // Initialize rate limiter
+    // Initialize rate limiter using the Redis service
     this.rateLimiter = new RateLimiterRedis({
-      storeClient: this.redisClient,
+      storeClient: this.redisService["redis"],
       keyPrefix: "phone_verification",
       points: 3, // Number of attempts
       duration: 60 * 15, // 15 minutes
@@ -48,12 +43,7 @@ export class PhoneVerificationService {
       const code = this.generateVerificationCode();
 
       // Store code in Redis with 10-minute expiry
-      await this.redisClient.set(
-        `verification:${phoneNumber}`,
-        code,
-        "EX",
-        600
-      );
+      await this.redisService.set(`verification:${phoneNumber}`, code, 600);
 
       // Send SMS via Twilio
       const res = await this.twilioClient.messages.create({
@@ -76,7 +66,7 @@ export class PhoneVerificationService {
   async verifyCode(phoneNumber: string, code: string): Promise<boolean> {
     try {
       // Get stored code from Redis
-      const storedCode = await this.redisClient.get(
+      const storedCode = await this.redisService.get<string>(
         `verification:${phoneNumber}`
       );
 
@@ -86,7 +76,7 @@ export class PhoneVerificationService {
       }
 
       // Clear the code from Redis
-      await this.redisClient.del(`verification:${phoneNumber}`);
+      await this.redisService.del(`verification:${phoneNumber}`);
       logger.info(`Phone number ${phoneNumber} verified successfully`);
       return true;
     } catch (error) {
@@ -96,6 +86,6 @@ export class PhoneVerificationService {
   }
 
   async cleanup(): Promise<void> {
-    await this.redisClient.quit();
+    // No need to cleanup Redis connection as it's managed by RedisService
   }
 }
