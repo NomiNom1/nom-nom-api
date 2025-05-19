@@ -27,13 +27,29 @@ export class AddressService {
         throw new Error('User not found');
       }
 
-      // If this is a home or work address, ensure only one exists
+      // If this is a home or work address, update the existing one if it exists
       if (addressData.addressType === 'home' || addressData.addressType === 'work') {
-        const existingAddress = user.addresses.find(
+        const existingAddressIndex = user.addresses.findIndex(
           addr => addr.addressType === addressData.addressType
         );
-        if (existingAddress) {
-          throw new Error(`${addressData.addressType} address already exists`);
+
+        if (existingAddressIndex !== -1) {
+          // Update existing address
+          const existingAddress = user.addresses[existingAddressIndex];
+          const updatedAddress = {
+            ...existingAddress.toObject(),
+            ...addressData,
+            _id: existingAddress._id, // Preserve the original ID
+            updatedAt: new Date()
+          };
+
+          user.addresses[existingAddressIndex] = updatedAddress as IAddress;
+          await user.save();
+
+          // Invalidate cache
+          await this.invalidateUserAddressCache(userId);
+
+          return updatedAddress as IAddress;
         }
       }
 
@@ -44,8 +60,8 @@ export class AddressService {
         });
       }
 
+      // Create new address
       const newAddress = new mongoose.Types.ObjectId();
-      console.log("address", addressData);
       const address: IAddress = {
         _id: newAddress,
         ...addressData as Omit<IAddress, '_id'>,
