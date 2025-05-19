@@ -1,7 +1,8 @@
 import { RateLimiterRedis } from "rate-limiter-flexible";
 import { Twilio } from "twilio";
+import { getRedisConfig } from "../config/redis.config";
 import { logger } from "../utils/logger";
-import { RedisService, RedisConfig } from "./redis.service";
+import { RedisService } from "./redis.service";
 
 export class PhoneVerificationService {
   private readonly twilioClient: Twilio;
@@ -15,18 +16,13 @@ export class PhoneVerificationService {
       process.env.TWILIO_AUTH_TOKEN
     );
 
-    // Initialize Redis service with phone verification specific config
-    const redisConfig: RedisConfig = {
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-      keyPrefix: 'phone_verification',
-    };
-    this.redisService = RedisService.getInstance(redisConfig);
+    this.redisService = RedisService.getInstance(
+      getRedisConfig("phone_verification")
+    );
 
     // Initialize rate limiter using the Redis service
     this.rateLimiter = new RateLimiterRedis({
-      storeClient: this.redisService['redis'],
+      storeClient: this.redisService["redis"],
       keyPrefix: "phone_verification",
       points: 3, // Number of attempts
       duration: 60 * 15, // 15 minutes
@@ -47,11 +43,7 @@ export class PhoneVerificationService {
       const code = this.generateVerificationCode();
 
       // Store code in Redis with 10-minute expiry
-      await this.redisService.set(
-        `verification:${phoneNumber}`,
-        code,
-        600
-      );
+      await this.redisService.set(`verification:${phoneNumber}`, code, 600);
 
       // Send SMS via Twilio
       const res = await this.twilioClient.messages.create({

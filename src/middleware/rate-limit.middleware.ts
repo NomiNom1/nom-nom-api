@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { RedisService } from '../services/redis.service';
 import { logger } from '../utils/logger';
+import { getRedisConfig } from '../config/redis.config';
 
 interface RateLimitConfig {
   windowMs: number;
@@ -10,7 +11,7 @@ interface RateLimitConfig {
 }
 
 export const createRateLimiter = (config: RateLimitConfig) => {
-  const redisService = RedisService.getInstance();
+  const redisService = RedisService.getInstance(getRedisConfig('rate_limiter'));
   const windowMs = config.windowMs;
   const max = config.max;
   const message = config.message || 'Too many requests, please try again later.';

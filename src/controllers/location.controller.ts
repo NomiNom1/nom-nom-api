@@ -11,7 +11,9 @@ export class LocationController {
 
   searchAddress = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { query, sessionToken } = req.query;
+      const { query } = req.query;
+
+      console.log("received request...")
 
       if (!query || typeof query !== "string") {
         res.status(400).json({ message: "Query parameter is required" });
@@ -20,12 +22,12 @@ export class LocationController {
 
       const predictions = await this.locationService.searchAddress(
         query,
-        sessionToken as string | undefined
+        // sessionToken as string | undefined
       );
 
       res.json({ predictions });
     } catch (error) {
-      logger.error("Error in searchAddress controller:", error);
+      logger.error("Error in searchAddress controller:");
       res.status(500).json({
         message: "Error searching address",
         error: (error as Error).message,

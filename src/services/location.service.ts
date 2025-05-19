@@ -7,6 +7,7 @@ import {
   PlaceDetailsRequest,
   Status,
 } from "@googlemaps/google-maps-services-js";
+import { getRedisConfig } from "../config/redis.config";
 import { logger } from "../utils/logger";
 import { RedisService } from "./redis.service";
 
@@ -51,7 +52,9 @@ export class LocationService {
     }
 
     this.client = new Client({});
-    this.redisService = RedisService.getInstance();
+    this.redisService = RedisService.getInstance(
+      getRedisConfig("location_service")
+    );
   }
 
   private async retryWithBackoff<T>(
@@ -83,7 +86,8 @@ export class LocationService {
       ) {
         throw new Error(`Google Maps API error: ${response.data.status}`);
       }
-      return response.data as T;
+
+      return response as T;
     } catch (error) {
       this.metrics.errors++;
       logger.error("Google Maps API error:", error);
@@ -97,7 +101,7 @@ export class LocationService {
   ): Promise<PlacePrediction[]> {
     try {
       // Check Redis cache first
-      const cacheKey = `location:search:${query}:${sessionToken || "default"}`;
+      const cacheKey = `location:search:${query}:${sessionToken ?? "default"}`;
       const cachedResults =
         await this.redisService.get<PlacePrediction[]>(cacheKey);
 
@@ -172,7 +176,7 @@ export class LocationService {
   ): Promise<PlaceDetails> {
     try {
       // Check Redis cache first
-      const cacheKey = `location:details:${placeId}:${sessionToken || "default"}`;
+      const cacheKey = `location:details:${placeId}:${sessionToken ?? "default"}`;
       const cachedDetails = await this.redisService.get<PlaceDetails>(cacheKey);
 
       if (cachedDetails) {

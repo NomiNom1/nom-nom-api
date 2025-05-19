@@ -21,7 +21,7 @@ const detailsLimiter = createRateLimiter({
 });
 
 // Location routes
-router.get("/search", searchLimiter, locationController.searchAddress);
+router.get("/search", locationController.searchAddress);
 router.get("/details", detailsLimiter, locationController.getPlaceDetails);
 
 export default router;
