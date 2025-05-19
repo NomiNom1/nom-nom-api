@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IAddress {
+export interface IAddress extends Document {
+  _id: mongoose.Types.ObjectId;
   label: string;
   street: string;
   apartment?: string;
@@ -75,7 +76,24 @@ const addressSchema = new Schema<IAddress>({
     required: true 
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  _id: true // Explicitly enable _id for subdocuments
+});
+
+// Add virtual id field for easier access
+addressSchema.virtual('id').get(function(this: IAddress) {
+  return this._id.toHexString();
+});
+
+// Ensure virtuals are included when converting to JSON
+addressSchema.set('toJSON', {
+  virtuals: true,
+  transform: (_, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  }
 });
 
 const userSchema = new Schema<IUser>(

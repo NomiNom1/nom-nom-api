@@ -2,6 +2,7 @@ import { User, IAddress } from '../models/user.model';
 import { RedisService } from './redis.service';
 import { getRedisConfig } from '../config/redis.config';
 import { logger } from '../utils/logger';
+import mongoose from 'mongoose';
 
 export class AddressService {
   private readonly redisService: RedisService;
@@ -40,19 +41,21 @@ export class AddressService {
         });
       }
 
-      const newAddress: IAddress = {
-        ...addressData as IAddress,
+      const newAddress = new mongoose.Types.ObjectId();
+      const address: IAddress = {
+        _id: newAddress,
+        ...addressData as Omit<IAddress, '_id'>,
         createdAt: new Date(),
         updatedAt: new Date()
-      };
+      } as IAddress;
 
-      user.addresses.push(newAddress);
+      user.addresses.push(address);
       await user.save();
 
       // Invalidate cache
       await this.invalidateUserAddressCache(userId);
 
-      return newAddress;
+      return address;
     } catch (error) {
       logger.error('Error in addAddress:', error);
       throw error;
@@ -67,7 +70,7 @@ export class AddressService {
       }
 
       const addressIndex = user.addresses.findIndex(
-        addr => addr.id.toString() === addressId
+        addr => addr._id.toString() === addressId
       );
 
       if (addressIndex === -1) {
@@ -94,12 +97,13 @@ export class AddressService {
       }
 
       // Update address
-      user.addresses[addressIndex] = {
+      const updatedAddress = {
         ...user.addresses[addressIndex].toObject(),
         ...updateData,
         updatedAt: new Date()
       };
 
+      user.addresses[addressIndex] = updatedAddress as IAddress;
       await user.save();
 
       // Invalidate cache
