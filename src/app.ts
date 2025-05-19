@@ -8,6 +8,7 @@ import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
 import phoneVerificationRoutes from './routes/phone-verification.routes';
 import locationRoutes from './routes/location.routes';
+import addressRoutes from './routes/address.routes';
 import { logger } from './utils/logger';
 
 const app = express();
@@ -40,6 +41,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/phone-verification', phoneVerificationRoutes);
 app.use('/api/location', locationRoutes);
+app.use('/api/addresses', addressRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
