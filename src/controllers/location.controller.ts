@@ -13,8 +13,6 @@ export class LocationController {
     try {
       const { query } = req.query;
 
-      console.log("received request...")
-
       if (!query || typeof query !== "string") {
         res.status(400).json({ message: "Query parameter is required" });
         return;
