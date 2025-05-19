@@ -153,4 +153,40 @@ export class AddressController {
       });
     }
   };
+
+  addAddressFromPlaces = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = this.getUserId(req);
+      if (!userId) {
+        res.status(401).json({ message: 'User ID is required' });
+        return;
+      }
+
+      const { placeId, label, addressType, dropOffOptions, instructions, isDefault } = req.body;
+
+      if (!placeId || !label || !addressType) {
+        res.status(400).json({ 
+          message: 'Missing required fields',
+          required: ['placeId', 'label', 'addressType']
+        });
+        return;
+      }
+
+      const address = await this.addressService.addAddressFromPlaces(userId, placeId, {
+        label,
+        addressType,
+        dropOffOptions,
+        instructions,
+        isDefault
+      });
+
+      res.status(201).json(address);
+    } catch (error) {
+      logger.error('Error in addAddressFromPlaces controller:', error);
+      res.status(500).json({ 
+        message: 'Error adding address from Places API', 
+        error: (error as Error).message 
+      });
+    }
+  };
 } 

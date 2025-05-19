@@ -3,13 +3,16 @@ import { RedisService } from './redis.service';
 import { getRedisConfig } from '../config/redis.config';
 import { logger } from '../utils/logger';
 import mongoose from 'mongoose';
+import { LocationService } from './location.service';
 
 export class AddressService {
   private readonly redisService: RedisService;
+  private readonly locationService: LocationService;
   private readonly CACHE_TTL = 3600; // 1 hour
 
   constructor() {
     this.redisService = RedisService.getInstance(getRedisConfig('default'));
+    this.locationService = new LocationService();
   }
 
   private async invalidateUserAddressCache(userId: string): Promise<void> {
@@ -212,5 +215,77 @@ export class AddressService {
       logger.error('Error in setDefaultAddress:', error);
       throw error;
     }
+  }
+
+  async addAddressFromPlaces(userId: string, placeId: string, addressData: {
+    label: string;
+    addressType: 'home' | 'work' | 'custom';
+    dropOffOptions?: {
+      handItToMe: boolean;
+      leaveAtDoor: boolean;
+    };
+    instructions?: string;
+    isDefault?: boolean;
+  }): Promise<IAddress> {
+    try {
+      // Get place details from Google Places API
+      const placeDetails = await this.locationService.getPlaceDetails(placeId);
+
+      // Parse the formatted address into components
+      const addressComponents = this.parseFormattedAddress(placeDetails.formatted_address);
+
+      // Create the address object
+      const address: Partial<IAddress> = {
+        label: addressData.label,
+        street: addressComponents.street,
+        city: addressComponents.city,
+        state: addressComponents.state,
+        zipCode: addressComponents.zipCode,
+        country: addressComponents.country,
+        addressType: addressData.addressType,
+        dropOffOptions: addressData.dropOffOptions || {
+          handItToMe: false,
+          leaveAtDoor: false
+        },
+        instructions: addressData.instructions,
+        isDefault: addressData.isDefault || false
+      };
+
+      // Add the address to the user
+      return await this.addAddress(userId, address);
+    } catch (error) {
+      logger.error('Error in addAddressFromPlaces:', error);
+      throw error;
+    }
+  }
+
+  private parseFormattedAddress(formattedAddress: string): {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  } {
+    // Split the address into components
+    const parts = formattedAddress.split(',').map(part => part.trim());
+    
+    // Extract components
+    const street = parts[0] || '';
+    const city = parts[1] || '';
+    const stateZip = parts[2] || '';
+    const country = parts[3] || 'US';
+
+    // Split state and zip code
+    const stateZipParts = stateZip.split(' ');
+    const state = stateZipParts[0] || '';
+    const zipCode = stateZipParts[1] || '';
+
+    return {
+      street,
+      city,
+      state,
+      zipCode,
+      country
+    };
   }
 } 

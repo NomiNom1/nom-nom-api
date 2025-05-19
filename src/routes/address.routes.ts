@@ -15,10 +15,11 @@ const addressLimiter = createRateLimiter({
 });
 
 // All routes require authentication
-// router.use(authenticateToken);
+router.use(authenticateToken);
 
 // Address routes with rate limiting
 router.post('/', addressLimiter, addressController.addAddress);
+router.post('/from-places', addressLimiter, addressController.addAddressFromPlaces);
 router.get('/', addressLimiter, addressController.getAddresses);
 router.get('/:addressId', addressLimiter, addressController.getAddressById);
 router.put('/:addressId', addressLimiter, addressController.updateAddress);

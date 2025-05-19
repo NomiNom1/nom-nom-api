@@ -207,7 +207,7 @@ export class LocationService {
             place_id: placeId,
             fields: ["formatted_address", "geometry", "place_id", "types"],
             key: process.env.GOOGLE_MAPS_API_KEY!,
-            sessiontoken: sessionToken || "",
+            sessiontoken: sessionToken ?? "",
           },
         };
 
@@ -220,15 +220,15 @@ export class LocationService {
         }
 
         const details: PlaceDetails = {
-          formatted_address: response.data.result.formatted_address || "",
+          formatted_address: response.data.result.formatted_address ?? "",
           geometry: {
             location: {
-              lat: response.data.result.geometry?.location.lat || 0,
-              lng: response.data.result.geometry?.location.lng || 0,
+              lat: response.data.result.geometry?.location.lat ?? 0,
+              lng: response.data.result.geometry?.location.lng ?? 0,
             },
           },
-          place_id: response.data.result.place_id || "",
-          types: response.data.result.types || [],
+          place_id: response.data.result.place_id ?? "",
+          types: response.data.result.types ?? [],
         };
 
         // Cache the results in Redis
