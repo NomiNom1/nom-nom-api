@@ -242,6 +242,13 @@ export class AddressService {
         state: addressComponents.state,
         zipCode: addressComponents.zipCode,
         country: addressComponents.country,
+        location: {
+          type: 'Point',
+          coordinates: [
+            placeDetails.geometry.location.lng,
+            placeDetails.geometry.location.lat
+          ]
+        },
         addressType: addressData.addressType,
         dropOffOptions: addressData.dropOffOptions || {
           handItToMe: false,
