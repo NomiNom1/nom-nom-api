@@ -1,0 +1,35 @@
+{
+    "family": "nomi-nom-api-task",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+        {
+            "name": "nomi-nom-api-container",
+            "image": "236109592447.dkr.ecr.us-east-1.amazonaws.com/nomi-nom/nomi-nom-api:latest",
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/nomi-nom-api-task",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "cpu": 0,
+            "memory": 256
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::236109592447:role/ecsTaskExecutionRole"
+}
