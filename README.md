@@ -228,5 +228,9 @@ LLM
 # prompts
 I am creating an IOS app similar to Doordash, Uber Eats, and Grubhub. Follow google / meta best practices for highly scalabe app design the size of TikTok, Instagram, or WeChat for the API that is in Node / Express TypeScript. 
 
+
+## General Architecture
+I am creating an IOS app similar to Doordash, Uber Eats, and Grubhub. Follow google / meta best practices for highly scalabe app design the size of TikTok, Instagram, or WeChat. I currently have swift ios, with node api express connected to mongodb for information like users order, promotions, resturatns etc that is integrated with google maps place api and twilio for one time code authentication. As well as redis for cache. The chat part is using nestjs and socker io with kafka and cassandra db. Now for tracker user session, and other data related to tracking user activity such as time visited the app, time spent on a page, time spent on a restaurant page, buttons clicked, etc. What is the best method to incorporate this? Should I build another microservice for this ? Also, should I be integrating this into the existing mongodb or a SQL database for highly scalable / data analysis etc ? Please give recommendations based on massively scalalbe principles. 
+
 Need:
 https://developers.google.com/maps/documentation/places/web-service/place-autocomplete
