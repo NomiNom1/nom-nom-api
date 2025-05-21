@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IAddress extends Document {
-  _id: mongoose.Types.ObjectId;
+  id: string;
   label: string;
   street: string;
   apartment?: string;
@@ -51,6 +51,7 @@ export interface IUser extends Document {
 }
 
 const addressSchema = new Schema<IAddress>({
+  id: { type: String, required: true, unique: true },
   label: { type: String, required: true },
   street: { type: String, required: true },
   apartment: { type: String },
@@ -77,23 +78,7 @@ const addressSchema = new Schema<IAddress>({
   }
 }, {
   timestamps: true,
-  _id: true // Explicitly enable _id for subdocuments
-});
-
-// Add virtual id field for easier access
-addressSchema.virtual('id').get(function(this: IAddress) {
-  return this._id.toHexString();
-});
-
-// Ensure virtuals are included when converting to JSON
-addressSchema.set('toJSON', {
-  virtuals: true,
-  transform: (_, ret) => {
-    ret.id = ret._id;
-    delete ret._id;
-    delete ret.__v;
-    return ret;
-  }
+  _id: false
 });
 
 const userSchema = new Schema<IUser>(
@@ -123,12 +108,16 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-// Indexes for performance
+// Update indexes for better scalability
+userSchema.index({ 'addresses.id': 1 });
 userSchema.index({ 'addresses.location': '2dsphere' });
+userSchema.index({ 'addresses.city': 1 });
+userSchema.index({ 'addresses.state': 1 });
+userSchema.index({ 'addresses.country': 1 });
+userSchema.index({ 'addresses.addressType': 1 });
+userSchema.index({ 'addresses.isDefault': 1 });
 userSchema.index({ email: 1 });
 userSchema.index({ phone: 1, countryCode: 1 }, { unique: true });
 userSchema.index({ countryCode: 1 });
-userSchema.index({ 'addresses.addressType': 1 });
-userSchema.index({ 'addresses.label': 1 });
 
 export const User = mongoose.model<IUser>('User', userSchema); 

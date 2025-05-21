@@ -1,4 +1,4 @@
-name: Deploy to ECR
+name: Build and Push to ECR
 
 on:
   push:
@@ -6,9 +6,10 @@ on:
       - main
 
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }} # Use the GitHub secret for the region
-  ECR_REPOSITORY: nomi-nom/nomi-nom-api
-  IMAGE_TAG: latest
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY_NAME: nomi-nom/nomi-nom-api # Only the repository name part
+  AWS_ACCOUNT_ID: 236109592447 # Your AWS Account ID
+  ECS_CONTAINER_NAME: nomi-nom-api-task # Name of your container in the ECS Task Definition
 
 jobs:
   build-and-push:
@@ -32,9 +33,47 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Build and push image to Amazon ECR
+        id: build-image # Add an ID to reference its outputs
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          # Use github.sha for a unique, immutable tag
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          FULL_ECR_URI="$ECR_REGISTRY/$ECR_REPOSITORY_NAME"
+          
+          echo "Building image: $FULL_ECR_URI:$IMAGE_TAG"
+          docker build -t $FULL_ECR_URI:$IMAGE_TAG .
+          
+          echo "Pushing image: $FULL_ECR_URI:$IMAGE_TAG"
+          docker push $FULL_ECR_URI:$IMAGE_TAG
+
+          # Output the full image URI for subsequent steps
+          echo "IMAGE_URI=$FULL_ECR_URI:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Generate imagedefinitions.json for CodeDeploy
+        id: generate-imagedefinitions
+        run: |
+          # Use the output from the previous step for the image URI
+          IMAGE_URI="${{ steps.build-image.outputs.IMAGE_URI }}"
+          
+          # Create the imageDefinitions.json for CodeDeploy
+          # The 'name' field must match the container name in your ECS Task Definition
+          echo "[{\"name\":\"${{ env.ECS_CONTAINER_NAME }}\",\"imageUri\":\"${IMAGE_URI}\"}]" > imagedefinitions.json
+          
+          echo "Generated imagedefinitions.json:"
+          cat imagedefinitions.json
+
+      - name: Upload imagedefinitions.json to S3 for CodePipeline Source
+        run: |
+          # The S3 bucket name MUST match the source bucket configured in your CodePipeline.
+          # You need to create this S3 bucket manually or via Infrastructure as Code.
+          # Example: your-pipeline-source-artifacts-bucket-${{ env.AWS_REGION }}-${{ env.AWS_ACCOUNT_ID }}
+          CODEPIPELINE_SOURCE_BUCKET="nomi-nom-pipeline-source-artifacts-${{ env.AWS_REGION }}-${{ env.AWS_ACCOUNT_ID }}"
+          ARTIFACT_KEY="imagedefinitions.zip" # CodePipeline will look for this name
+
+          echo "Zipping imagedefinitions.json..."
+          zip -j $ARTIFACT_KEY imagedefinitions.json # -j means junk paths, so only the file is in the zip
+
+          echo "Uploading $ARTIFACT_KEY to s3://$CODEPIPELINE_SOURCE_BUCKET/$ARTIFACT_KEY"
+          aws s3 cp $ARTIFACT_KEY s3://$CODEPIPELINE_SOURCE_BUCKET/$ARTIFACT_KEY
